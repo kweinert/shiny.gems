@@ -22,7 +22,7 @@ colormode_ui <- function(id="colormode", lang=c("en", "de"), ...) {
 	light_starts <- 6
 	
 	shiny::div(
-		tags$script(HTML(paste0("
+		shiny::tags$script(shiny::HTML(paste0("
 			function updateTimeStatus() {
 				var now = new Date();
 				var hours = now.getHours(); // local hour
@@ -47,12 +47,12 @@ colormode_ui <- function(id="colormode", lang=c("en", "de"), ...) {
 				setTimeout(updateTimeStatus, timeUntilUpdate);
 			}
 
-			// Initialen Status setzen
+			// initial status 
 			$(document).on('shiny:connected', function() {
 				updateTimeStatus();
 			});
 
-			// Shiny Message Handler (für den initialen Aufruf)
+			// shiny message handler (for the initial call)
 			Shiny.addCustomMessageHandler('updateTimeStatus', function(message) {
 				 updateTimeStatus();
 			});
