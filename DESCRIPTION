@@ -1,12 +1,13 @@
 Package: shiny.gems
 Type: Package
 Title: Useful Functions and Modules for Shiny Apps
-Version: 0.0.4
+Version: 0.0.5
 Date: 2025-02-21
 Author: Karsten Weinert
 Maintainer: Karsten Weinert <karsten.weinert@prognos.com>
 Description: This package contains several helper functions and demos for Shiny applications. For example, there are examples for exception handling and darkmode support.
-License: GPL (>= 3)
+License: file LICENSE
+Depends: R (>= 4.1.0)
 Imports:
     shiny, bslib, colorspace
 Suggests:
