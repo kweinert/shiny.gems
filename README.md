@@ -1,4 +1,4 @@
-![r-universe](https://r-lib.r-universe.dev/badges/shiny.gems)
+![r-universe](https://kweinert.r-universe.dev/badges/shiny.gems)
 
 shiny.gems
 ==========
