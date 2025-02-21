@@ -12,5 +12,4 @@ Imports:
 Suggests:
 	titanic, khroma, vcd, grid, ggplot2
 LazyLoad: yes
-VignetteBuilder: knitr
 RoxygenNote: 7.3.2
