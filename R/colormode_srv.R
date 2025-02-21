@@ -9,12 +9,11 @@
 #' See colormode_demo to see the module in action, see colormode_srv for implementation details.
 #'
 #' @param id character, shiny id. Default "colormode"
-#' @param lang character, currently supported are "en" and "de". Default "en".
-#' @param ... further arguments that are passed to shiny::radioButtons(). In particular, "width" and "inline" can be set this way.
+#' @param r shiny::reactiveValues object
 #' @return the output of shiny::radioButtons() 
 #' @export
 colormode_srv <- function(id="colormode", r) {
-  moduleServer(id=id, function(input, output, session) {
+  shiny::moduleServer(id=id, function(input, output, session) {
 	
 	current_mode <- shiny::reactive({
 		# message("colormode_srv: current_mode()")
