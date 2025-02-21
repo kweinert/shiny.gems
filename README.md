@@ -1,3 +1,5 @@
+![r-universe](https://r-lib.r-universe.dev/badges/shiny.gems)
+
 shiny.gems
 ==========
 
