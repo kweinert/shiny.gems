@@ -8,7 +8,13 @@ The `shiny.gems` package showcases some practices and shiny modules that help de
 Installation
 ------------
 
-You can install the latest development version of the code using the devtools R package.
+The current version can be installed from r-universe using
+
+```
+install.packages("shiny.gems", repos="https://kweinert.r-universe.dev")
+```
+
+You can install the latest development version of the code from Github using the `devtools` R package. This might be interesting as soon there is a development branch.
 
 ```
 # Install devtools, if you haven't already.
@@ -18,7 +24,7 @@ library(devtools)
 install_github("kweinert/shiny.gems")
 ```
 
-In the context of `shinylive`, you can use the r-universe repository soon.
+In the context of `shinylive`, the r-universe repository provides a WASM binary. This binary will be downloaded and bundled from `shinylive::export` if the `wasm_packages` is set to `TRUE`.
 
 
 Getting Started
