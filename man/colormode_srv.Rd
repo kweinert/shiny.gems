@@ -9,9 +9,7 @@ colormode_srv(id = "colormode", r)
 \arguments{
 \item{id}{character, shiny id. Default "colormode"}
 
-\item{lang}{character, currently supported are "en" and "de". Default "en".}
-
-\item{...}{further arguments that are passed to shiny::radioButtons(). In particular, "width" and "inline" can be set this way.}
+\item{r}{shiny::reactiveValues object}
 }
 \value{
 the output of shiny::radioButtons()
