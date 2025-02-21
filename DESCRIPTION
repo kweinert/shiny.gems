@@ -1,0 +1,16 @@
+Package: shiny.gems
+Type: Package
+Title: Useful Functions and Modules for Shiny Apps
+Version: 0.0.2
+Date: 2025-02-19
+Author: Karsten Weinert
+Maintainer: Karsten Weinert <karsten.weinert@prognos.com>
+Description: Helper functions / galleries for shiny
+License: GPL (>= 3)
+Imports:
+    shiny, bslib, colorspace
+Suggests:
+	titanic, khroma, vcd, grid, ggplot2
+LazyLoad: yes
+VignetteBuilder: knitr
+RoxygenNote: 7.3.2
