@@ -1,15 +1,15 @@
 Package: shiny.gems
 Type: Package
 Title: Useful Functions and Modules for Shiny Apps
-Version: 0.0.3
+Version: 0.0.4
 Date: 2025-02-21
 Author: Karsten Weinert
 Maintainer: Karsten Weinert <karsten.weinert@prognos.com>
-Description: Helper functions / Galleries for Shiny
+Description: This package contains several helper functions and demos for Shiny applications. For example, there are examples for exception handling and darkmode support.
 License: GPL (>= 3)
 Imports:
     shiny, bslib, colorspace
 Suggests:
-    titanic, khroma, vcd, grid, ggplot2
+	titanic, khroma, vcd, grid, ggplot2
 LazyLoad: yes
 RoxygenNote: 7.3.2
