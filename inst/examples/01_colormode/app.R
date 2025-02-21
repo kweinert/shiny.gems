@@ -1,4 +1,8 @@
-#' shiny::runApp(system.file("examples/01-persist", package="shiny.gems"))
+# if not installed and we are not in a development setting, install the package
+if(!requireNamespace("shiny.gems") && (!requireNamespace("pkgload") || !pkgload::is_dev_package("shiny.gems")))
+	install.packages("shiny.gems", repos=c("https://kweinert.r-universe.dev", "https://cloud.r-project.org"))
+
+# shiny::runApp(system.file("examples/01-persist", package="shiny.gems"))
 ui <- bslib::page_navbar(
   title = "Color Mode Demo",
   theme = bslib::bs_theme(version=5),
