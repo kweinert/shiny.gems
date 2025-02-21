@@ -45,7 +45,7 @@ ui <- bslib::page_navbar(
 	title="",
 	icon=shiny::icon("cog", lib = "font-awesome"), 
 	# colormode_ui(id="colormode")
-	colormode_ui()
+	shiny.gems::colormode_ui()
   )
 )
 
@@ -60,7 +60,7 @@ server <- function(input, output, session) {
 		)
 	)
 	# colormode_srv(id="colormode", r=r)
-	colormode_srv(r=r)
+	shiny.gems::colormode_srv(r=r)
 	
 	# colormode tab
 	output$cm_mode <- shiny::renderPrint(r$colormode$mode)
