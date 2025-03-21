@@ -1,5 +1,6 @@
 # Earthfile Artefacts
 build/
+check/
 
 # History files
 .Rhistory
