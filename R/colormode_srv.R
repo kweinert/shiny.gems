@@ -29,10 +29,13 @@ colormode_srv <- function(id="colormode", r, verbose=FALSE) {
 	
 	current_mode <- shiny::reactive({
 		if(verbose)  message("colormode_srv: current_mode()")
-		ans <- if(input$pref=="auto") 
-			input$auto_status # this variable is curated by JS; see colormode_ui
+		ans <- if(input$pref=="clock") 
+			input[["colormode_time_status"]] # this variable is curated by JS; see colormode_ui
+		else if(input$pref=="system") 
+			if (isTRUE(input[["colormode_system_status"]])) "dark" else "light"
 		else
 			input$pref
+		r$colormode[["current_mode"]] <- ans
 		return(ans)
 	})
 

@@ -1,3 +1,4 @@
+
 # if not installed and we are not in a development setting, install the package
 if(!requireNamespace("shiny.gems") && (!requireNamespace("pkgload") || !pkgload::is_dev_package("shiny.gems")))
 	install.packages("shiny.gems", repos=c("https://kweinert.r-universe.dev", "https://cloud.r-project.org"))
@@ -38,6 +39,13 @@ ui <- bslib::page_navbar(
   bslib::nav_panel(
 	title= "Reactable",
 	reactable::reactableOutput("table")
+  ),
+  bslib::nav_panel(
+	title="ECharts4R",
+	bslib::card(
+		bslib::card_header("Titanic: Survivors"),		
+		echarts4r::echarts4rOutput("gauge_chart")
+	)
   ),
   bslib::nav_panel(
 	title="Colormode Vars",
@@ -212,6 +220,36 @@ server <- function(input, output, session) {
 			paper_bgcolor = pal[["body-bg"]]
 		)
 	})
+	
+	# echarts4r example
+	# note the darkMode argument, new in version 5
+	# there is also: echarts4r::e_color(background = background_color) 
+    output$gauge_chart <- echarts4r::renderEcharts4r({
+		pal <- r$colormode$bs_pal
+		clr <- r$colormode$pals$quali[2]
+        background_color <- pal[["body-bg"]]
+        survival_rate <- (table(titanic_dat()[,"Survived"]) |> proportions())["1"] * 100 
+		echarts4r::e_charts(darkMode=isTRUE(r$colormode[["current_mode"]]=="dark")) |>
+		  echarts4r::e_gauge(
+			value = round(unname(survival_rate), 1),  # Anteil Überlebende (gerundet)
+			name = "Survival Rate",
+			min = 0,
+			max = 100,
+			detail = list(formatter = "{value}%"),
+			pointer = list(
+			  itemStyle = list(
+				color = clr
+			  )
+			),
+			axisLine = list(
+			  lineStyle = list(
+				color = list(
+				  list(1, clr)  # Farbe der Gauge
+				)
+			  )
+			)
+		  )
+    })
 }
 
 shiny::shinyApp(ui, server)

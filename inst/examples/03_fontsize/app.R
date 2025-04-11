@@ -1,36 +1,49 @@
 #https://stackoverflow.com/questions/35065086/shinyrenderplot-cannot-set-resolution-reactive
 
+# shiny::runApp(system.file("examples/03_fontsize", package="shiny.gems"))
+
+#https://stackoverflow.com/questions/35065086/shinyrenderplot-cannot-set-resolution-reactive
+
+# shiny::runApp(system.file("examples/03_fontsize", package="shiny.gems"))
+
 library(shiny)
+library(bslib)
 library(ggplot2)
 library(data.table)
+requireNamespace("titanic")
 
 # UI Definition
-ui <- fluidPage(
+ui <- bslib::page_navbar(
+  theme = bslib::bs_theme(version = 5),  # Bootstrap 5 Theme
+  title = "Fontsize",
   tags$head(
     # JavaScript to detect screen info and send to Shiny
     tags$script(HTML('
-      document.addEventListener("DOMContentLoaded", function() {
+      $(document).on("shiny:connected", function() {
         var screenInfo = {
           width: window.screen.width,
           height: window.screen.height,
           dpi: window.devicePixelRatio
         };
+        console.log("Screen Info:", screenInfo); // Debugging im Browser
         Shiny.setInputValue("screen_info", screenInfo);
       });
     '))
   ),
-  titlePanel("Horizontal Bar Plots with Dynamic DPI"),
-  fluidRow(
-    column(6, 
-           h3("Normal Label Sizes"),
-           plotOutput("normal_plot", width = "400px", height = "400px")
+  bslib::nav_panel(
+	"Base R",
+    bslib::layout_columns(
+		bslib::card(
+		  bslib::card_header("Default Resolution"),
+		  shiny::plotOutput("default_plot", width = "400px", height = "400px")
+		),
+		bslib::card(
+		  bslib::card_header("High Resolution"),
+		  plotOutput("hires_plot", width = "400px", height = "400px")
+		)
     ),
-    column(6, 
-           h3("Large Label Sizes"),
-           plotOutput("large_plot", width = "400px", height = "400px")
-    )
-  ),
-  verbatimTextOutput("screen_debug")  # Display screen info for debugging
+	verbatimTextOutput("screen_debug")  # Display screen info for debugging
+  )
 )
 
 # Server Logic
@@ -62,46 +75,42 @@ server <- function(input, output, session) {
     }
   })
   
+  titanic_dat <- shiny::reactive(titanic::titanic_train)
+  titanic_cnt <- shiny::reactive(xtabs(~ Survived + Pclass, data = titanic_dat()))
+  
   # Plot with normal label sizes
-  output$normal_plot <- renderPlot({
-    ggplot(data, aes(y = group, x = value, fill = group)) +
-      geom_bar(stat = "identity") +
-      facet_wrap(~ category) +
-      labs(x = "Value", y = "Group Category") +
-      theme(
-        plot.margin = margin(20, 20, 20, 20, "pt"),
-        strip.text = element_text(size = 12),
-        axis.title = element_text(size = 12),
-        axis.text = element_text(size = 10),
-        legend.position = "none"
-      )
-  }, res = isolate(plot_dpi()))
+  output$default_plot <- renderPlot({
+	barplot(titanic_cnt(), beside = TRUE, 
+        main = "Anzahl der Überlebenden nach Passagierklasse",
+        xlab = "Passagierklasse", ylab = "Anzahl Passagiere",
+        col = c("blue", "red"),
+        legend.text = c("Not Survived", "Survived"),
+        args.legend = list(x = "topleft", bty = "n"))
+  }) #, res = 96)
   
   # Plot with large label sizes
-  output$large_plot <- renderPlot({
-    ggplot(data, aes(y = group, x = value, fill = group)) +
-      geom_bar(stat = "identity") +
-      facet_wrap(~ category) +
-      labs(x = "Value", y = "Group Category") +
-      theme(
-        plot.margin = margin(20, 20, 20, 20, "pt"),
-        strip.text = element_text(size = 20),
-        axis.title = element_text(size = 20),
-        axis.text = element_text(size = 16),
-        legend.position = "none"
-      )
-  }, res = isolate(plot_dpi()))
-  
+  output$hires_plot <- renderPlot({
+	barplot(titanic_cnt(), beside = TRUE, 
+        main = "Anzahl der Überlebenden nach Passagierklasse",
+        xlab = "Passagierklasse", ylab = "Anzahl Passagiere",
+        col = c("blue", "red"),
+        legend.text = c("Not Survived", "Survived"),
+        args.legend = list(x = "topleft", bty = "n"))
+  }, res = 144)
+    
   # Debug output to display screen info
   output$screen_debug <- renderPrint({
     screen_info <- input$screen_info
     if (is.null(screen_info)) {
       "Waiting for screen info..."
     } else {
-      paste("Screen Width:", screen_info$width, "px",
-            "\nScreen Height:", screen_info$height, "px",
-            "\nDevice Pixel Ratio:", screen_info$dpi,
-            "\nSelected DPI:", plot_dpi())
+      cat(
+        "Screen Width: ", screen_info$width, "px\n",
+        "Screen Height: ", screen_info$height, "px\n",
+        "Device Pixel Ratio: ", screen_info$dpi, "\n",
+        "Selected DPI: ", plot_dpi(), "\n",
+        sep = ""
+      )
     }
   })
 }

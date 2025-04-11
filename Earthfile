@@ -1,24 +1,40 @@
 VERSION 0.8
-FROM rocker/r-ver:4.3.2  # Offizielles R-Docker-Image mit R 4.3.2
+FROM rocker/r-ver:4.3.2
 
-WORKDIR /app
+WORKDIR /pkg
 
-# Installiere grundlegende R-Tools für Paketentwicklung
 install-deps:
-    RUN apt-get update && apt-get install -y \
-        libcurl4-openssl-dev \
-        libssl-dev \
-        libxml2-dev
-    RUN R -e "install.packages(c('devtools', 'roxygen2'), repos='https://cran.r-project.org')"
+	# Installiere Systemabhängigkeiten für R und pak
+	RUN apt-get update && apt-get install -y \
+		build-essential \
+		libssl-dev \
+		libcurl4-openssl-dev \
+		&& rm -rf /var/lib/apt/lists/*
 
-# Kopiere dein R-Paket (falls schon vorhanden)
-copy-source:
-    COPY . /app
-    SAVE ARTIFACT /app AS LOCAL ./output
+	# Installiere pak von CRAN
+	RUN R -e "install.packages('pak', repos='https://cloud.r-project.org/')"
 
-# Beispiel: Baue und teste ein R-Paket
+	# Konfiguriere P3M als Repository für Binärpakete (Ubuntu 22.04 "jammy" als Beispiel)
+	RUN echo "options(repos = c(CRAN = 'https://p3m.dev/cran/__linux__/jammy/latest'))" >> /usr/local/lib/R/etc/Rprofile.site
+	
+	# Installiere weitere Pakete als Binaries über pak
+    RUN R -e "pak::pkg_install(c('shiny', 'tinytest'))"
+    
+install-img:
+	FROM +install-deps
+	SAVE IMAGE install-img:latest
+
+# Kopiere das R-Paket und baue es
 build:
     FROM +install-deps
-    DO +COPY-SOURCE
+    COPY . /pkg
     RUN R CMD build .
-    SAVE ARTIFACT *.tar.gz AS LOCAL ./build
+    SAVE ARTIFACT *.tar.gz AS LOCAL ./build/
+
+# Führe R CMD check auf dem gebauten Paket aus
+check:
+    FROM +install-deps
+    COPY +build/*.tar.gz .
+    RUN R -e "pak::pkg_install(dir('.', pattern='*.tar.gz', full.names=TRUE), dependencies=TRUE)"
+    RUN R CMD check --as-cran --no-tests --no-build-vignettes --no-manual *.tar.gz
+    SAVE ARTIFACT *.Rcheck/00* AS LOCAL ./check/

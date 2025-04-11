@@ -15,9 +15,8 @@
 #' @param ... further arguments that are passed to shiny::radioButtons(). In particular, "width" and "inline" can be set this way.
 #' @return a shiny::div 
 #' @export
-colormode_ui <- function(id="colormode", lang=c("en", "de"), ...) {
+colormode_ui <- function(id="colormode", ...) {
 	ns <- shiny::NS(id)
-	if(length(lang)>1) lang <- lang[1]
 	dark_starts <- 18
 	light_starts <- 6
 	
@@ -27,7 +26,7 @@ colormode_ui <- function(id="colormode", lang=c("en", "de"), ...) {
 				var now = new Date();
 				var hours = now.getHours(); // local hour
 				var status = (hours >= ", dark_starts, " || hours < ", light_starts, ") ? 'dark' : 'light'; 
-				Shiny.setInputValue('", ns("auto_status"), "', status);
+				Shiny.setInputValue('", ns("colormode_time_status"), "', status);
 
 				// when does the next change happen?
 				var nextUpdateTime;
@@ -56,13 +55,24 @@ colormode_ui <- function(id="colormode", lang=c("en", "de"), ...) {
 			Shiny.addCustomMessageHandler('updateTimeStatus', function(message) {
 				 updateTimeStatus();
 			});
+			
+			// check system settings
+			$(document).on('shiny:connected', function() {
+				var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+				Shiny.setInputValue('", ns("colormode_system_status"), "', isDarkMode);
+				
+				// react to changes
+				window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+				  Shiny.setInputValue('", ns("colormode_system_status"), "', e.matches);
+				});
+			});
 		"))),
 		shiny::radioButtons(
 			inputId=ns("pref"),
-			label=if(lang=="de") "Farbe:" else "Color:",
+			label="Color:",
 			selected = "light",
-			choiceNames = if(lang=="de") c("Hell", "Dunkel", "Automatisch") else c("Light", "Dark", "Automatic"),
-			choiceValues = c("light", "dark", "auto"),
+			choiceNames = c("Light", "Dark", "Automatic (Clock)", "Automatic (System)"),
+			choiceValues = c("light", "dark", "clock", "system"),
 			...
 		)
 	)
