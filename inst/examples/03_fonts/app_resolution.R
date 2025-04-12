@@ -8,14 +8,18 @@
 
 library(shiny)
 library(bslib)
-library(ggplot2)
-library(data.table)
 requireNamespace("titanic")
+requireNamespace("ragg")
+options(shiny.useragg = TRUE) # redundant, TRUE is the default
 
 # UI Definition
 ui <- bslib::page_navbar(
-  theme = bslib::bs_theme(version = 5),  # Bootstrap 5 Theme
-  title = "Fontsize",
+  theme = bslib::bs_theme(
+	version = 5,
+	base_font = font_google("Lexend"),
+	heading_font = font_google("DM Serif Display")
+  ),  # Bootstrap 5 Theme
+  title = "Resolution",
   tags$head(
     # JavaScript to detect screen info and send to Shiny
     tags$script(HTML('
@@ -35,26 +39,19 @@ ui <- bslib::page_navbar(
     bslib::layout_columns(
 		bslib::card(
 		  bslib::card_header("Default Resolution"),
-		  shiny::plotOutput("default_plot", width = "400px", height = "400px")
+		  shiny::plotOutput("default_plot")
 		),
 		bslib::card(
 		  bslib::card_header("High Resolution"),
-		  plotOutput("hires_plot", width = "400px", height = "400px")
+		  shiny::imageOutput("hires_plot")
 		)
     ),
-	verbatimTextOutput("screen_debug")  # Display screen info for debugging
+	shiny::verbatimTextOutput("screen_debug")  # Display screen info for debugging
   )
 )
 
 # Server Logic
 server <- function(input, output, session) {
-  
-  # Sample dataset
-  data <- data.table(
-    category = rep(c("A", "B", "C"), each = 2),
-    group = rep(c("Very Long Label 1", "Very Long Label 2"), times = 3),
-    value = c(4, 6, 5, 7, 7, 9)
-  )
   
   # Reactive value for DPI based on screen info
   plot_dpi <- reactive({
@@ -78,7 +75,7 @@ server <- function(input, output, session) {
   titanic_dat <- shiny::reactive(titanic::titanic_train)
   titanic_cnt <- shiny::reactive(xtabs(~ Survived + Pclass, data = titanic_dat()))
   
-  # Plot with normal label sizes
+  # default resolution
   output$default_plot <- renderPlot({
 	barplot(titanic_cnt(), beside = TRUE, 
         main = "Anzahl der Überlebenden nach Passagierklasse",
@@ -86,18 +83,41 @@ server <- function(input, output, session) {
         col = c("blue", "red"),
         legend.text = c("Not Survived", "Survived"),
         args.legend = list(x = "topleft", bty = "n"))
-  }) #, res = 96)
+  }) 
   
-  # Plot with large label sizes
-  output$hires_plot <- renderPlot({
+  output$hires_plot <- renderImage({
+	plotinfo <- shiny::getCurrentOutputInfo()
+    width <- plotinfo$width()
+    height <- plotinfo$height()
+    message("width=", width, ", height=", height)
+    outfile <- tempfile(fileext = ".png")
+    pixel_ratio <- 2.608696
+    ragg::agg_png(
+		file = outfile,
+		width = width*pixel_ratio, 
+		height = height*pixel_ratio, 
+		bg = "white",  
+		scaling = pixel_ratio,
+		res = 72
+	)
 	barplot(titanic_cnt(), beside = TRUE, 
         main = "Anzahl der Überlebenden nach Passagierklasse",
         xlab = "Passagierklasse", ylab = "Anzahl Passagiere",
         col = c("blue", "red"),
         legend.text = c("Not Survived", "Survived"),
-        args.legend = list(x = "topleft", bty = "n"))
-  }, res = 144)
-    
+        args.legend = list(x = "topleft", bty = "n")
+	)
+    dev.off()
+
+    # Return a list containing information about the image
+    list(src = outfile,
+         contentType = "image/png",
+         width = width,
+         height = height,
+         alt = "This is alternate text")
+
+  }, deleteFile = TRUE)
+  
   # Debug output to display screen info
   output$screen_debug <- renderPrint({
     screen_info <- input$screen_info
