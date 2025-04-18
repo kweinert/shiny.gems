@@ -1,17 +1,18 @@
 #' colormode_ui/srv is a shiny module for managing colors; in particular enabling dark mode.
 #'
-#' The server follows the "petite r" approach. It expects a reactiveValues parameter r. It modifies entries of the "colormode
+#' The server follows the "petite r" approach. It expects a reactiveValues parameter r. It modifies "colormode" entries
 #'
-#' Currently, it is not possible to save the setting across session. This would require a user management.
+#' To save preferences across sessions, the lstore module is used if it is available.
 #'
 #' The module follows a singleton design pattern, hence the id is preset to "colormode". It is strongly recommended to keep that id.
 #'
-#' See colormode_demo to see the module in action, see colormode_srv for implementation details.
+#' See shiny::runApp(system.file("examples/01_colormode", package="shiny.gems"))
+#' to see the module in action, see colormode_srv for implementation details.
 #'
 #' @param id character, shiny id. Default "colormode"
 #' @param r shiny::reactiveValues object
 #' @param verbose logical, diagnostic message, default FALSE
-#' @return the output of shiny::radioButtons() 
+#' @return used for its side effects
 #' @export
 colormode_srv <- function(id="colormode", r, verbose=FALSE) {
   shiny::moduleServer(id=id, function(input, output, session) {

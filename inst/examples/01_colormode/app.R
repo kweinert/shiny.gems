@@ -1,9 +1,13 @@
 
-# if not installed and we are not in a development setting, install the package
-if(!requireNamespace("shiny.gems") && (!requireNamespace("pkgload") || !pkgload::is_dev_package("shiny.gems")))
-	install.packages("shiny.gems", repos=c("https://kweinert.r-universe.dev", "https://cloud.r-project.org"))
+# requirements
+stopifnot(
+	requireNamespace("paletteer"), requireNamespace("reactable"),
+	requireNamespace("echarts4r"), requireNamespace("ggplot2"),
+	requireNamespace("vcd"), requireNamespace("grid"),
+	requireNamespace("titanic"), requireNamespace("shiny.gems")
+)
 
-# shiny::runApp(system.file("examples/01_colormode", package="shiny.gems"))
+# shiny::runApp(system.file("examples/01_colormode", package="shiny.gems"), launch.browser=FALSE, port=3838, host="0.0.0.0")
 ui <- bslib::page_navbar(
   title = "Color Mode Demo",
   theme = bslib::bs_theme(version=5),

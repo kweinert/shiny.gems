@@ -8,10 +8,10 @@
 #'
 #' The module follows a singleton design pattern, hence the id is preset to "colormode". It is strongly recommended to keep that id.
 #'
-#' See colormode_demo to see the module in action, see colormode_srv for implementation details.
+#' Run shiny::runApp(system.file("examples/01_colormode", package="shiny.gems"))
+#' to see the module in action, see colormode_srv for implementation details.
 #'
 #' @param id character, shiny id. Default "colormode"
-#' @param lang character, currently supported are "en" and "de". Default "en".
 #' @param ... further arguments that are passed to shiny::radioButtons(). In particular, "width" and "inline" can be set this way.
 #' @return a shiny::div 
 #' @export

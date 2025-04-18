@@ -1,8 +1,8 @@
 Package: shiny.gems
 Type: Package
 Title: Useful Functions and Modules for Shiny Apps
-Version: 0.0.7
-Date: 2025-03-21
+Version: 0.0.8
+Date: 2025-04-18
 Author: Karsten Weinert
 Maintainer: Karsten Weinert <karsten.g.weinert@gmail.com>
 Description: Several helper functions and demos for Shiny applications. For example, there are examples for exception handling and darkmode support.
@@ -11,6 +11,6 @@ Depends: R (>= 4.1.0)
 Imports:
     shiny, bslib, colorspace
 Suggests:
-	titanic, khroma, vcd, grid, ggplot2
+	titanic, khroma, vcd, grid, ggplot2, plotly, echarts4r, paletteer
 LazyLoad: yes
 RoxygenNote: 7.3.2

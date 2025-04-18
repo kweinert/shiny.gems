@@ -4,12 +4,10 @@
 \alias{colormode_ui}
 \title{colormode_ui/srv is a shiny module for managing colors; in particular enabling dark mode.}
 \usage{
-colormode_ui(id = "colormode", lang = c("en", "de"), ...)
+colormode_ui(id = "colormode", ...)
 }
 \arguments{
 \item{id}{character, shiny id. Default "colormode"}
-
-\item{lang}{character, currently supported are "en" and "de". Default "en".}
 
 \item{...}{further arguments that are passed to shiny::radioButtons(). In particular, "width" and "inline" can be set this way.}
 }
@@ -26,5 +24,6 @@ module. In particular, the Javascript updates "auto_status" when at 8pm and 6am.
 
 The module follows a singleton design pattern, hence the id is preset to "colormode". It is strongly recommended to keep that id.
 
-See colormode_demo to see the module in action, see colormode_srv for implementation details.
+Run shiny::runApp(system.file("examples/01_colormode", package="shiny.gems"))
+to see the module in action, see colormode_srv for implementation details.
 }
