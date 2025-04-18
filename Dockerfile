@@ -32,8 +32,11 @@ RUN R -e "install.packages(c('rmarkdown', 'knitr', 'titanic', \
 	'khroma', 'vcd', 'grid', 'ggplot2', 'remotes', 'plotly', \
 	'colorspace', 'reactable', 'echarts4r', 'paletteer'), \
 	repos='https://cloud.r-project.org')"
-RUN R -e "remotes::install_github('kweinert/shiny.gems')"
 RUN R -e "if (!require('plotly')) stop('plotly not installed')"
+
+# change the version number here and in the DESCRIPTION file to enforce rebuilding this layer
+ARG SHINY_GEMS_VER=0.0.9
+RUN R -e "remotes::install_github('kweinert/shiny.gems'); stopifnot(packageVersion('shiny.gems')=='${SHINY_GEMS_VER}')"
 
 # Copy Shiny app files
 COPY ./inst/examples /srv/shiny-server/

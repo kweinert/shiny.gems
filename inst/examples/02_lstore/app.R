@@ -4,7 +4,7 @@
 ui <- bslib::page_navbar(
   title = "Settings Demo",
   theme = bslib::bs_theme(version=5),
-  header = lstore_ui("ls_demo"), # invisible, use header argument to avoid bslib warning
+  header = shiny.gems::lstore_ui("ls_demo"), # invisible, use header argument to avoid bslib warning
   
   bslib::nav_panel(
 	"MRE",
